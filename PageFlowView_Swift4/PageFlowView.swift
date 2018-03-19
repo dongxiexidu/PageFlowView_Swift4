@@ -45,7 +45,7 @@ protocol PageFlowViewDataSource : NSObjectProtocol{
 
 
 class PageFlowView: UIView {
-
+    
     /// 是否开启无限轮播,默认为开启
     var isCarousel = true
     public var orientation = PageFlowOrientation.horizontal
@@ -58,8 +58,8 @@ class PageFlowView: UIView {
     public var pageControl : UIPageControl?
     // 非当前页的透明比例
     public var minimumPageAlpha : CGFloat = 1.0
-
-
+    
+    
     public var _leftRightMargin : CGFloat = 20
     var leftRightMargin : CGFloat! {
         get {
@@ -74,12 +74,12 @@ class PageFlowView: UIView {
         get {
             return _topBottomMargin
         }
-
+        
         set{
             _topBottomMargin = newValue * CGFloat(0.5)
         }
     }
-
+    
     
     
     /// 是否开启自动滚动,默认为开启
@@ -117,8 +117,8 @@ class PageFlowView: UIView {
     }()
     
     public func adjustCenterSubview() {
-        if isOpenAutoScroll == true && orginPageCount > 0{
-            scrollView.setContentOffset(CGPoint.init(x: pageSize.width*CGFloat(page), y: 0), animated: false)
+        if self.isOpenAutoScroll == true && self.orginPageCount > 0{
+            scrollView.setContentOffset(CGPoint.init(x: self.pageSize.width*CGFloat(self.page), y: 0), animated: false)
         }
     }
     
@@ -201,46 +201,48 @@ class PageFlowView: UIView {
             
             if #available(iOS 10.0, *) {
                 
-                let timerss = Timer.scheduledTimer(withTimeInterval: autoTime, repeats: true, block: { (timers) in
-                    
-                    self.autoNextPage()
+                let timerss = Timer.scheduledTimer(withTimeInterval: autoTime, repeats: true, block: {[unowned self] (timers) in
+                    // 必须写这里?否则不调用???
+                    self.timer = timers
+                    self.autoNextPage(timers)
                 })
                 RunLoop.main.add(timerss, forMode: RunLoopMode.commonModes)
                 
-                timer = timerss
             } else {
-                // iOS 11 此方法有bug
-                let timers = Timer.scheduledTimer(timeInterval: autoTime, target: self, selector: #selector(autoNextPage), userInfo: nil, repeats: true)
-                RunLoop.main.add(timers, forMode: RunLoopMode.commonModes)
-                timer = timers
-                
+                // 异步调用 会有问题???
+                DispatchQueue.main.async {
+                    let timers : Timer = Timer.scheduledTimer(timeInterval: self.autoTime, target: self, selector: #selector(self.autoNextPage(_:)), userInfo: nil, repeats: true)
+                    self.timer = timers
+                    RunLoop.main.add(timers, forMode: RunLoopMode.commonModes)
+                }
             }
         }
     }
     
     /// 自动轮播
-    @objc func autoNextPage() {
-        page = page+1
+    @objc func autoNextPage(_ timer: Timer) {
+        //TODO: 必须要强引用 否则一开始不调用????
+        self.timer = timer
+        
+        self.page = page+1
         switch orientation {
         case .horizontal:
-            scrollView.setContentOffset(CGPoint.init(x: pageSize.width*CGFloat(page), y: 0), animated: true)
+            scrollView.setContentOffset(CGPoint.init(x: self.pageSize.width*CGFloat(self.page), y: 0), animated: true)
         case .vertical:
-            scrollView.setContentOffset(CGPoint.init(x: 0, y: pageSize.height*CGFloat(page)), animated: true)
+            scrollView.setContentOffset(CGPoint.init(x: 0, y: self.pageSize.height*CGFloat(self.page)), animated: true)
         }
     }
     
     func removeCellAtIndex(index: Int) {
         
-        if cells[index] is NSNull {
+        let cell = cells[index]
+        if cell is NSNull {
             return
         }
-        let cell : IndexBannerSubiew = cells[index] as! IndexBannerSubiew
-        reusableCells.append(cell)
-        
-        if cell.superview == nil {
+        queueReusableCell(cell: cell as! IndexBannerSubiew)
+        if cell.superview != nil {
             cell.removeFromSuperview()
         }
-        
         cells[index] = NSNull.init()
     }
     
@@ -278,7 +280,7 @@ class PageFlowView: UIView {
             
         case .vertical:
             let offsetY = scrollView.contentOffset.y
-
+            
             for i in visibleRange.location..<visibleRange.location+visibleRange.length {
                 let cell = cells[i] as! IndexBannerSubiew
                 subviewClassName = NSStringFromClass(cell.classForCoder)
@@ -312,10 +314,10 @@ class PageFlowView: UIView {
         assert(pageIndex >= 0 && pageIndex < cells.count)
         
         var cell = cells[pageIndex] as? IndexBannerSubiew
-
+        
         if cell == nil {
             cell = dataSource?.cellForPageAtIndex(flowView: self, atIndex: pageIndex % orginPageCount)
-           
+            
             assert(cell != nil, "datasource must not return nil")
             
             cells[pageIndex] = cell!
@@ -339,7 +341,7 @@ class PageFlowView: UIView {
             }
             
         }
-
+        
     }
     
     
@@ -442,7 +444,7 @@ class PageFlowView: UIView {
         scrollView.delegate = nil
     }
     
-
+    
 }
 
 
@@ -542,7 +544,7 @@ extension PageFlowView {
                 }
             }
             needsReload = false
-    
+            
         }
         // 根据当前scrollView的offset设置cell
         setPagesAtContentOffset(offset: scrollView.contentOffset)
@@ -561,7 +563,7 @@ extension PageFlowView : UIScrollViewDelegate {
         if orginPageCount == 0 {
             return
         }
-
+        
         var pageIndex : Int = 0
         
         switch orientation {
@@ -651,3 +653,4 @@ extension PageFlowView : UIScrollViewDelegate {
     }
     
 }
+

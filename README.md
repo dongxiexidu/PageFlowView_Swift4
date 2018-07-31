@@ -3,19 +3,18 @@
 
 Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
 
-##1.实现了什么功能
+**1.实现了什么功能**
 * 页面滚动的方向分为横向和纵向
 * 目的:实现类似于选择电影票的效果,并且实现无限/自动轮播
 * 特点:1.无限轮播;2.自动轮播;3.电影票样式的层次感;4.非当前显示view具有缩放和透明的特效
 
 
 
-
-###2.动画效果
+**2.动画效果**
 <img src="horizontal.gif" width="100%">
 <img src="vertical.gif" width="100%">
 
-###3.功能介绍
+**3.功能介绍**
 
     /// 是否开启自动滚动,默认为开启
     public var isOpenAutoScroll = true
@@ -53,7 +52,7 @@ Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
     }
 
 
-###4.代码示例
+**4.代码示例**
 
     // 模拟器原因,底部会有残影,真机测试没有
     let pageFlowView = PageFlowView.init(frame: CGRect.init(x: 0, y: 72, width: kScreenW, height: kScreenW*9/16))

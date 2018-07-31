@@ -13,9 +13,11 @@ let kScreenW = UIScreen.main.bounds.size.width
 class ViewController: UIViewController {
     
     var imageArray = [UIImage]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = UIColor.lightGray
         
         for i in 0..<5 {
             let name = String.init(format: "Yosemite%02d", i)
@@ -26,7 +28,10 @@ class ViewController: UIViewController {
         
         self.automaticallyAdjustsScrollViewInsets = false
         
+        // 模拟器原因,底部会有残影,真机测试没有
         let pageFlowView = PageFlowView.init(frame: CGRect.init(x: 0, y: 72, width: kScreenW, height: kScreenW*9/16))
+        pageFlowView.backgroundColor = UIColor.white
+        
         pageFlowView.delegate = self
         pageFlowView.dataSource = self
         pageFlowView.minimumPageAlpha = 0.1
@@ -54,7 +59,7 @@ extension ViewController : PageFlowViewDelegate {
     }
     
     func didSelectCell(subView: IndexBannerSubiew, subViewIndex subIndex: Int) {
-         print("点击了第\(subIndex+1)页")
+        print("点击了第\(subIndex+1)页")
     }
     
     

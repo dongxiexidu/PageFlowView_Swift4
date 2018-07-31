@@ -113,6 +113,7 @@ class PageFlowView: UIView {
         scrollV.clipsToBounds = false
         scrollV.showsVerticalScrollIndicator = false
         scrollV.showsHorizontalScrollIndicator = false
+        //        scrollV.backgroundColor = UIColor.blue
         return scrollV
     }()
     
@@ -139,12 +140,7 @@ class PageFlowView: UIView {
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if self.point(inside: point, with: event) == true {
-            var newPoint = CGPoint.zero
-            newPoint.x = point.x - scrollView.frame.origin.x + scrollView.contentOffset.x
-            newPoint.y = point.y - scrollView.frame.origin.y + scrollView.contentOffset.y
-            if scrollView.point(inside: newPoint, with: event) {
-                return scrollView
-            }
+            return scrollView
         }
         return nil
     }
@@ -194,34 +190,26 @@ class PageFlowView: UIView {
     func stopTimer() {
         if let myTimer = timer {
             myTimer.invalidate()
+            timer = nil
         }
     }
+    
     @objc func startTimer() {
         if orginPageCount > 1 && isOpenAutoScroll && isCarousel {
             
-            if #available(iOS 10.0, *) {
+            // 异步调用 会有问题???
+            DispatchQueue.main.async {
                 
-                let timerss = Timer.scheduledTimer(withTimeInterval: autoTime, repeats: true, block: {[unowned self] (timers) in
-                    // 必须写这里?否则不调用???
-                    self.timer = timers
-                    self.autoNextPage(timers)
-                })
-                RunLoop.main.add(timerss, forMode: RunLoopMode.commonModes)
-                
-            } else {
-                // 异步调用 会有问题???
-                DispatchQueue.main.async {
-                    let timers : Timer = Timer.scheduledTimer(timeInterval: self.autoTime, target: self, selector: #selector(self.autoNextPage(_:)), userInfo: nil, repeats: true)
-                    self.timer = timers
-                    RunLoop.main.add(timers, forMode: RunLoopMode.commonModes)
-                }
+                let timers : Timer = Timer.scheduledTimer(timeInterval: self.autoTime, target: self, selector: #selector(self.autoNextPage(_:)), userInfo: nil, repeats: true)
+                self.timer = timers
+                RunLoop.main.add(timers, forMode: RunLoopMode.commonModes)
             }
         }
     }
     
     /// 自动轮播
     @objc func autoNextPage(_ timer: Timer) {
-        //TODO: 必须要强引用 否则一开始不调用????
+        
         self.timer = timer
         
         self.page = page+1
@@ -653,4 +641,3 @@ extension PageFlowView : UIScrollViewDelegate {
     }
     
 }
-

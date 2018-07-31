@@ -1,8 +1,9 @@
 
-    注:本文是对`Objective-C`版本`NewPagedFlowView`的用Swift4重写
-    Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
+注:本文是对`Objective-C`版本`NewPagedFlowView`的用Swift4重写
 
-###1.实现了什么功能
+Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
+
+##1.实现了什么功能
 * 页面滚动的方向分为横向和纵向
 * 目的:实现类似于选择电影票的效果,并且实现无限/自动轮播
 * 特点:1.无限轮播;2.自动轮播;3.电影票样式的层次感;4.非当前显示view具有缩放和透明的特效

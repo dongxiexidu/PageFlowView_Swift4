@@ -1,6 +1,6 @@
 
-注:本文是对`Objective-C`版本`NewPagedFlowView`的用Swift4重写
-Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
+    注:本文是对`Objective-C`版本`NewPagedFlowView`的用Swift4重写
+    Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
 
 ###1.实现了什么功能
 * 页面滚动的方向分为横向和纵向
@@ -9,12 +9,13 @@ Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
 
 
 
-***
+
 ###2.动画效果
 <img src="horizontal.gif" width="100%">
 <img src="vertical.gif" width="100%">
 
 ###3.功能介绍
+
     /// 是否开启自动滚动,默认为开启
     public var isOpenAutoScroll = true
     /// 是否开启无限轮播,默认为开启

@@ -10,7 +10,7 @@ import UIKit
 
 class IndexBannerSubiew: UIView {
     
-    var didSelectCellBlock: ((Int,IndexBannerSubiew)->())?
+    var didSelectCellBlock: ((Int,IndexBannerSubiew)->Void)?
     
     
     override init(frame: CGRect) {
@@ -24,9 +24,7 @@ class IndexBannerSubiew: UIView {
     }
     
     @objc func singleCellTapAction(gesture : UIGestureRecognizer) {
-        if didSelectCellBlock != nil {
-            didSelectCellBlock!(tag,self)
-        }
+        didSelectCellBlock?(tag,self)
     }
     
     required init?(coder aDecoder: NSCoder) {

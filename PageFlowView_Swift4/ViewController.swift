@@ -35,9 +35,9 @@ class ViewController: UIViewController {
         pageFlowView.delegate = self
         pageFlowView.dataSource = self
         pageFlowView.minimumPageAlpha = 0.1
-        pageFlowView.isCarousel = true
+        pageFlowView.isCarousel = true // 无限轮播
         pageFlowView.orientation = .horizontal
-        pageFlowView.isOpenAutoScroll = true
+        pageFlowView.isOpenAutoScroll = false
         
         //初始化pageControl
         let pageControl = UIPageControl.init(frame: CGRect.init(x: 0, y: pageFlowView.bounds.height-32, width: kScreenW, height: 8))

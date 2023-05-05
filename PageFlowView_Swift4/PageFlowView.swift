@@ -138,12 +138,12 @@ class PageFlowView: UIView {
     }
     
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if self.point(inside: point, with: event) == true {
-            return scrollView
-        }
-        return nil
-    }
+//    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+//        if self.point(inside: point, with: event) == true {
+//            return scrollView
+//        }
+//        return nil
+//    }
     
     
     func scrollToPage(pageNumber: Int) {
@@ -202,7 +202,7 @@ class PageFlowView: UIView {
                 
                 let timers : Timer = Timer.scheduledTimer(timeInterval: self.autoTime, target: self, selector: #selector(self.autoNextPage(_:)), userInfo: nil, repeats: true)
                 self.timer = timers
-                RunLoop.main.add(timers, forMode: RunLoopMode.commonModes)
+                RunLoop.main.add(timers, forMode: RunLoop.Mode.common)
             }
         }
     }
@@ -247,7 +247,7 @@ class PageFlowView: UIView {
                 let cell = cells[i] as! IndexBannerSubiew
                 subviewClassName = NSStringFromClass(cell.classForCoder)
                 let origin : CGFloat = cell.frame.origin.x
-                let delta : CGFloat = fabs(origin-offsetX)
+                let delta : CGFloat = abs(origin-offsetX)
                 
                 //如果没有缩小效果的情况下的本该的Frame
                 let originCellFrame : CGRect = CGRect.init(x: pageSize.width * CGFloat(i), y: 0, width: pageSize.width, height: pageSize.height)
@@ -256,12 +256,12 @@ class PageFlowView: UIView {
                     let leftRightInset : CGFloat = self.leftRightMargin * delta / pageSize.width
                     let topBottomInset : CGFloat = self.topBottomMargin * delta / pageSize.width
                     cell.layer.transform = CATransform3DMakeScale((pageSize.width-leftRightInset*2)/pageSize.width, (pageSize.height-topBottomInset*2)/pageSize.height, 1.0)
-                    cell.frame = UIEdgeInsetsInsetRect(originCellFrame, UIEdgeInsetsMake(topBottomInset, leftRightInset, topBottomInset, leftRightInset))
+                    cell.frame = originCellFrame.inset(by: UIEdgeInsets(top: topBottomInset, left: leftRightInset, bottom: topBottomInset, right: leftRightInset))
                     
                 }else{
                     cell.coverView.alpha = minimumPageAlpha
                     cell.layer.transform = CATransform3DMakeScale((pageSize.width-leftRightMargin*2)/pageSize.width, (pageSize.height-topBottomMargin*2)/pageSize.height, 1.0)
-                    cell.frame = UIEdgeInsetsInsetRect(originCellFrame, UIEdgeInsetsMake(topBottomMargin, leftRightMargin, topBottomMargin, leftRightMargin))
+                    cell.frame = originCellFrame.inset(by: UIEdgeInsets(top: topBottomMargin, left: leftRightMargin, bottom: topBottomMargin, right: leftRightMargin))
                 }
                 
             }
@@ -273,7 +273,7 @@ class PageFlowView: UIView {
                 let cell = cells[i] as! IndexBannerSubiew
                 subviewClassName = NSStringFromClass(cell.classForCoder)
                 let origin : CGFloat = cell.frame.origin.y
-                let delta : CGFloat = fabs(origin-offsetY)
+                let delta : CGFloat = abs(origin-offsetY)
                 
                 //如果没有缩小效果的情况下的本该的Frame
                 let originCellFrame : CGRect = CGRect.init(x: 0, y: pageSize.height * CGFloat(i), width: pageSize.width, height: pageSize.height)
@@ -282,11 +282,11 @@ class PageFlowView: UIView {
                     let leftRightInset : CGFloat = leftRightMargin * delta / pageSize.height
                     let topBottomInset : CGFloat = topBottomMargin * delta / pageSize.height
                     cell.layer.transform = CATransform3DMakeScale((pageSize.width-leftRightInset*2)/pageSize.width, (pageSize.height-topBottomInset*2)/pageSize.height, 1.0)
-                    cell.frame = UIEdgeInsetsInsetRect(originCellFrame, UIEdgeInsetsMake(topBottomInset, leftRightInset, topBottomInset, leftRightInset))
+                    cell.frame = originCellFrame.inset(by: UIEdgeInsets(top: topBottomInset, left: leftRightInset, bottom: topBottomInset, right: leftRightInset))
                     cell.mainImageView.frame = cell.bounds
                 }else{
                     cell.coverView.alpha = minimumPageAlpha
-                    cell.frame = UIEdgeInsetsInsetRect(originCellFrame, UIEdgeInsetsMake(topBottomMargin, leftRightMargin, topBottomMargin, leftRightMargin))
+                    cell.frame = originCellFrame.inset(by: UIEdgeInsets(top: topBottomMargin, left: leftRightMargin, bottom: topBottomMargin, right: leftRightMargin))
                     cell.mainImageView.frame = cell.bounds
                 }
                 
@@ -307,25 +307,26 @@ class PageFlowView: UIView {
             cell = dataSource?.cellForPageAtIndex(flowView: self, atIndex: pageIndex % orginPageCount)
             
             assert(cell != nil, "datasource must not return nil")
+            guard let cell = cell else { return }
             
-            cells[pageIndex] = cell!
+            cells[pageIndex] = cell
             
-            cell?.tag = pageIndex % orginPageCount
-            cell?.setSubviewsWithSuperViewBounds(superViewBounds: CGRect.init(x: 0, y: 0, width: pageSize.width, height: pageSize.height))
+            cell.tag = pageIndex % orginPageCount
+            cell.setSubviewsWithSuperViewBounds(superViewBounds: CGRect.init(x: 0, y: 0, width: pageSize.width, height: pageSize.height))
             
-            cell?.didSelectCellBlock = {[weak self] tag,cell in
+            cell.didSelectCellBlock = {[weak self] tag,cell in
                 self?.singleCellTapAction(selectTag: tag, withCell: cell)
             }
             
             switch orientation {
             case .horizontal:
-                cell?.frame = CGRect.init(x: pageSize.width*CGFloat(pageIndex), y: 0, width: pageSize.width, height: pageSize.height)
+                cell.frame = CGRect.init(x: pageSize.width*CGFloat(pageIndex), y: 0, width: pageSize.width, height: pageSize.height)
             case .vertical:
-                cell?.frame = CGRect.init(x: 0, y: pageSize.height*CGFloat(pageIndex), width: pageSize.width, height: pageSize.height)
+                cell.frame = CGRect.init(x: 0, y: pageSize.height*CGFloat(pageIndex), width: pageSize.width, height: pageSize.height)
             }
             
-            if cell?.superview == nil {
-                scrollView.addSubview(cell!)
+            if cell.superview == nil {
+                scrollView.addSubview(cell)
             }
             
         }

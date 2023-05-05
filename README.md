@@ -1,5 +1,5 @@
 
-注:本文是对`Objective-C`版本`NewPagedFlowView`的用Swift45重写
+注:本文是对`Objective-C`版本`NewPagedFlowView`的用Swift5重写
 
 Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
 
@@ -14,6 +14,8 @@ Objective-C版本,请移步https://github.com/PageGuo/NewPagedFlowView
 
 ![vertical](https://github.com/dongxiexidu/PageFlowView_Swift4/blob/master/vertical.gif)
 ![horizontal](https://github.com/dongxiexidu/PageFlowView_Swift4/blob/master/horizontal.gif)
+
+
 **3.功能介绍**
 
     /// 是否开启自动滚动,默认为开启
